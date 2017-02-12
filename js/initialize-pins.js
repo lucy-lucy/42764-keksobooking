@@ -1,6 +1,6 @@
 'use strict';
 
-window.initializePins = function () {
+(function () {
   var pinMap = document.querySelector('.tokyo__pin-map');
 
   var dialog = document.querySelector('.dialog');
@@ -15,6 +15,7 @@ window.initializePins = function () {
     pin.classList.add('pin--active');
     pin.setAttribute('aria-checked', true);
   };
+
   var disableActivePin = function () {
     var activePin = document.querySelector('.pin--active');
     if (activePin) {
@@ -27,6 +28,7 @@ window.initializePins = function () {
     dialogClose.addEventListener('click', hideDialog);
     dialogClose.addEventListener('keydown', hideDialogByKey);
   };
+
   var removeListenersFromCloseBtn = function () {
     dialogClose.removeEventListener('click', hideDialog);
     dialogClose.removeEventListener('keydown', hideDialogByKey);
@@ -38,6 +40,7 @@ window.initializePins = function () {
     dialogClose.setAttribute('area-pressed', false);
     addListenersToCloseBtn();
   };
+
   var hideDialog = function () {
     disableActivePin();
     dialog.style.display = 'none';
@@ -45,6 +48,7 @@ window.initializePins = function () {
     dialogClose.setAttribute('area-pressed', true);
     removeListenersFromCloseBtn();
   };
+
   var hideDialogByKey = function (evt) {
     if (isEnterPressed(evt)) {
       hideDialog();
@@ -64,6 +68,7 @@ window.initializePins = function () {
       target = target.parentNode;
     }
   };
+
   var handlePinSelectionByKey = function (evt) {
     if (isEnterPressed(evt)) {
       handlePinSelection(evt);
@@ -75,4 +80,4 @@ window.initializePins = function () {
   pinMap.addEventListener('click', handlePinSelection);
 
   pinMap.addEventListener('keydown', handlePinSelectionByKey);
-};
+})();

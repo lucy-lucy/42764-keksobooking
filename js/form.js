@@ -20,6 +20,14 @@
   var roomNumberValues = ['1', '2', '100'];
   var guestsCapacityValues = ['0', '3', '3'];
 
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
+
+  var syncValueWithMin = function (element, value) {
+    element.min = value;
+  };
+
   noticeTitle.requred = true;
   noticeTitle.pattern = '.{30,100}';
 
@@ -30,21 +38,11 @@
 
   noticeAddress.required = true;
 
-  window.synchronizeFields(noticeRoomNumber, noticeGuestsCapacity, roomNumberValues, guestsCapacityValues, 'value');
+  window.synchronizeFields(noticeTime, noticeTimeOut, timeValues, timeOutValues, syncValues);
 
-  noticeTime.addEventListener('change', function () {
-    window.synchronizeFields(noticeTime, noticeTimeOut, timeValues, timeOutValues, 'value');
-  });
+  window.synchronizeFields(noticeTimeOut, noticeTime, timeOutValues, timeValues, syncValues);
 
-  noticeTimeOut.addEventListener('change', function () {
-    window.synchronizeFields(noticeTimeOut, noticeTime, timeOutValues, timeValues, 'value');
-  });
+  window.synchronizeFields(noticeLodgingType, noticePrice, lodgingTypesValues, priceValues, syncValueWithMin);
 
-  noticeLodgingType.addEventListener('change', function () {
-    window.synchronizeFields(noticeLodgingType, noticePrice, lodgingTypesValues, priceValues, 'min');
-  });
-
-  noticeRoomNumber.addEventListener('change', function () {
-    window.synchronizeFields(noticeRoomNumber, noticeGuestsCapacity, roomNumberValues, guestsCapacityValues, 'value');
-  });
+  window.synchronizeFields(noticeRoomNumber, noticeGuestsCapacity, roomNumberValues, guestsCapacityValues, syncValues);
 })();

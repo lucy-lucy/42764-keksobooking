@@ -1,11 +1,7 @@
 'use strict';
 
-window.synchronizeFields = (function () {
-  var synchronize = function (firstField, secondField, firstFieldValues, secondFieldValues, propertyToSync) {
-    secondField[propertyToSync] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
-  };
-
-  return function (firstField, secondField, firstFieldValues, secondFieldValues, propertyToSync) {
-    synchronize(firstField, secondField, firstFieldValues, secondFieldValues, propertyToSync);
-  };
-})();
+window.synchronizeFields = function (firstField, secondField, firstFieldValues, secondFieldValues, callback) {
+  firstField.addEventListener('change', function () {
+    callback(secondField, secondFieldValues[firstFieldValues.indexOf(firstField.value)]);
+  });
+};

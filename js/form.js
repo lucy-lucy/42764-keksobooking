@@ -37,12 +37,15 @@
   noticePrice.max = 1000000;
 
   noticeAddress.required = true;
+  noticeAddress.readOnly = true;
 
+  // Двусторонняя синхронизация полей "Время заезда" и "Время выезда"
   window.synchronizeFields(noticeTime, noticeTimeOut, timeValues, timeOutValues, syncValues);
-
   window.synchronizeFields(noticeTimeOut, noticeTime, timeOutValues, timeValues, syncValues);
 
+  // Односторонняя синхронизация поля "Тип жилья" с полем "«Цена за ночь»"
   window.synchronizeFields(noticeLodgingType, noticePrice, lodgingTypesValues, priceValues, syncValueWithMin);
 
+  // Односторонняя синхронизация поля "Количество комнат" с полем "Количество гостей"
   window.synchronizeFields(noticeRoomNumber, noticeGuestsCapacity, roomNumberValues, guestsCapacityValues, syncValues);
 })();

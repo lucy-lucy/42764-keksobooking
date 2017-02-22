@@ -25,10 +25,21 @@ window.card = (function () {
   var pinEvent = null;
   var onPinChange = null;
 
+  var guestsDeclension = ['гостя', 'гостей', 'гостей'];
+  var roomsDeclension = ['комната', 'комнаты', 'комнат'];
+
   // Определение склонения существительного после числительного
-  var setDeclension = function (number, titles) {
-    var cases = [2, 0, 1, 1, 1, 2];
-    return titles [(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+  var setDeclension = function (num, titles) {
+    var mod10 = num % 10;
+    var mod100 = num % 100;
+
+    if (mod10 === 1 && mod100 !== 11) {
+      return titles[0];
+    } else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
+      return titles[1];
+    } else {
+      return titles[2];
+    }
   };
 
   // Добавление особенностей в карточку жилья
@@ -59,9 +70,6 @@ window.card = (function () {
 
   // Добавление содержимого в карточку жилья
   var fillCard = function (data) {
-    var guestsDeclension = ['гостя', 'гостей', 'гостей'];
-    var roomsDeclension = ['комната', 'комнаты', 'комнат'];
-
     userAvatar.setAttribute('src', data.author.avatar);
     userAvatar.setAttribute('alt', 'Avatar');
 
@@ -72,7 +80,7 @@ window.card = (function () {
     lodgeRoomsAndGuests.textContent = data.offer.rooms + ' '
                                       + setDeclension(data.offer.rooms, roomsDeclension)
                                       + ' для ' + data.offer.guests + ' '
-                                      + setDeclension(data.offer.rooms, guestsDeclension);
+                                      + setDeclension(data.offer.guests, guestsDeclension);
     lodgeCheckinTime.textContent = 'Заезд после ' + data.offer.checkin
                                     + ', выезд до ' + data.offer.checkout;
     fillFeatures(data);
@@ -94,9 +102,7 @@ window.card = (function () {
 
   // Показ карточки жилья
   var showDialog = function () {
-    if (typeof onPinChange === 'function') {
-      onPinChange(pinEvent);
-    }
+    onPinChange(pinEvent);
 
     dialog.style.display = 'block';
     dialog.setAttribute('aria-hidden', false);

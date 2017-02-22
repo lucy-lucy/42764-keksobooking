@@ -21,7 +21,7 @@
   };
 
   // Снятие активности с метки
-  var disableActivePin = function () {
+  var deactivatePin = function () {
     var activePin = pinMap.querySelector('.pin--active');
 
     if (activePin !== null) {
@@ -36,16 +36,16 @@
 
     var pins = pinMap.querySelectorAll('.pin');
 
-    pins.forEach(function (item) {
-      if (!item.classList.contains('pin__main')) {
-        pinMap.removeChild(item);
+    Array.prototype.forEach.call(pins, function (pin) {
+      if (!pin.classList.contains('pin__main')) {
+        pinMap.removeChild(pin);
       }
     });
   };
 
   // Функция-коллбэк для снятия активности с метки и возврата фокуса на метку
-  var onChangeCard = function (evt) {
-    disableActivePin();
+  var onCardShow = function (evt) {
+    deactivatePin();
 
     if (window.isEnterPressed(evt)) {
       evt.target.focus();
@@ -53,12 +53,12 @@
   };
 
   // Обработчик выбора текущего жилья
-  var pinSelectHandler = function (evt, data) {
+  var onPinSelect = function (evt, data) {
     var target = evt.target;
 
     while (target !== pinMap) {
       if (target.classList.contains('pin')) {
-        window.card.show(evt, data, onChangeCard);
+        window.card.show(evt, data, onCardShow);
         activatePin(target);
         return;
       }
@@ -67,9 +67,9 @@
   };
 
   // Обработчик выбора текущего жилья при активации события с клавиатуры
-  var pinSelectHandlerByKey = function (evt, data) {
+  var onPinSelectByKey = function (evt, data) {
     if (window.isEnterPressed(evt)) {
-      pinSelectHandler(evt, data);
+      onPinSelect(evt, data);
     }
   };
 
@@ -79,11 +79,11 @@
     pinMap.appendChild(newPin);
 
     newPin.addEventListener('click', function (evt) {
-      pinSelectHandler(evt, data);
+      onPinSelect(evt, data);
     });
 
     newPin.addEventListener('keydown', function (evt) {
-      pinSelectHandlerByKey(evt, data);
+      onPinSelectByKey(evt, data);
     });
   };
 
@@ -100,34 +100,33 @@
     return false;
   };
 
+  var isChecked = function (elem) {
+    return elem.checked;
+  };
+
+  var getValue = function (elem) {
+    return elem.value;
+  };
 
   // Проверка на содержание выбранных опций ("wi-fi", "conditioner" и др.)
-  var isIncludeSelectedFeatures = function (item) {
-    var isChecked = function (elem) {
-      return elem.checked;
-    };
-
-    var getValue = function (elem) {
-      return elem.value;
-    };
-
-    var isInclude = function (elem) {
+  var includeSelectedFeatures = function (item) {
+    var checkFeaturesName = function (elem) {
       return item.indexOf(elem) !== -1;
     };
 
     var checkedFeatures = Array.prototype.filter.call(housingFeatures, isChecked);
-    var checkedFeaturesNames = Array.prototype.map.call(checkedFeatures, getValue);
+    var checkedFeaturesNames = checkedFeatures.map(getValue);
 
-    return checkedFeatures === 'undefined' || checkedFeaturesNames.every(isInclude);
+    return checkedFeatures === 'undefined' || checkedFeaturesNames.every(checkFeaturesName);
   };
 
   // Фильтрация объявления по заданным в фильтре значениям
   var filterByValues = function (item) {
     return (housingType.value === 'any' || item.offer.type === housingType.value)
             && isInPriceRange(item)
-            && (housingRoomNumber.value === 'any' || item.offer.rooms === +housingRoomNumber.value)
-            && (housingGuestsNumber.value === 'any' || item.offer.guests === +housingGuestsNumber.value)
-            && isIncludeSelectedFeatures(item.offer.features);
+            && (housingRoomNumber.value === 'any' || item.offer.rooms === parseInt(housingRoomNumber.value, 10))
+            && (housingGuestsNumber.value === 'any' || item.offer.guests === parseInt(housingGuestsNumber.value, 10))
+            && includeSelectedFeatures(item.offer.features);
   };
 
   // Загрузка данных через AJAX и первичная отрисовка трех меток
